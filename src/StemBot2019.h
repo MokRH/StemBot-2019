@@ -60,7 +60,7 @@ void calibrateIR(int i) {
   display.println("SENSOR val");
   display.println("    " + String(i) + "    ");
   display.display();
-  /*
+  
     int j = i * 100, k = 0, kk = 0, state = 0;
     do {
     k += 1; kk += 1;
@@ -109,8 +109,8 @@ void calibrateIR(int i) {
     IR1_avg = (IR1_min + IR1_max) / 2; IR2_avg = (IR2_min + IR2_max) / 2; IR3_avg = (IR3_min + IR3_max) / 2;
     IR4_avg = (IR4_min + IR4_max) / 2; IR5_avg = (IR5_min + IR5_max) / 2;
     LED(0, 0, 0);
-  */
-  IR1_avg = i; IR2_avg = IR1_avg; IR3_avg = IR1_avg; IR4_avg = IR1_avg; IR5_avg = IR1_avg;
+  
+  //IR1_avg = i; IR2_avg = IR1_avg; IR3_avg = IR1_avg; IR4_avg = IR1_avg; IR5_avg = IR1_avg;
 }
 
 int invert_L = 0, invert_R = 0;
