@@ -503,3 +503,27 @@ void display_finishTime() {
   while (1);
 }
 
+/*
+long previous_time = 0;
+double last_error = 0;
+double pid(double _setpoint, double _input, double KP, double KI, double KD, int min_out, int max_out){
+  long current_time = millis();
+  long elapsed_time = current_time - previous_time;
+  previous_time = current_time;
+  
+  double _error = _setpoint - _input;
+  double int_error += _error * elapsedTime;
+  double rate_error = (_error - last_error) / elapsedTime;
+  last_error = _error;
+  
+  double _output = KP * _error + KI * int_error + KD * rate_error;
+  if (_output < min_out){
+    _output = min_out;
+  }
+  else if (_output > max_out){
+    _output = max_out;
+  }
+  
+  return(_output);
+}
+*/
