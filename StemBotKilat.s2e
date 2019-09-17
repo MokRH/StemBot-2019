@@ -212,7 +212,7 @@
 				"setup":"",
 				"inc":"",
 				"def":"",
-				"work":"BT_receiver();\n",
+				"work":"BT_receiver()",
 				"loop":""
 			}
 		]
