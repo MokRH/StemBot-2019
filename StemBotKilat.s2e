@@ -201,6 +201,20 @@
 				"work":"Stop();\n",
 				"loop":""
 			}
+		],
+		
+		[
+			"R",
+			"Get from BT",
+			"Get from BT",
+			"",
+			{
+				"setup":"",
+				"inc":"",
+				"def":"",
+				"work":"BT_receiver();\n",
+				"loop":""
+			}
 		]
 	],
 	"menus": {
