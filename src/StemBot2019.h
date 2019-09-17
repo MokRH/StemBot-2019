@@ -1,8 +1,16 @@
-//****************** PID Setting ******************//
-//pid settings and gains
-double Speed = 255, out_min = -Speed, out_max = Speed;
-double IR_position = 0 , setPoint = 0, outputVal = 0, KP = 0, KI = 0, KD = 0;
-//****************** PID Setting ******************//
+//****************** BT Setting ******************//
+#include <SoftwareSerial.h>
+const int8_t rx = 7, tx = 8, key = 6;
+SoftwareSerial BT(rx, tx); // RX, TX
+//****************** BT Setting ******************//
+
+//****************** HCSR04 setting ******************//
+#include "hcsr04.h"
+#define TRIG_PIN 10
+#define ECHO_PIN 9
+//HCSR04 hcsr04(TRIG_PIN, ECHO_PIN, min_distance(mm), max_distance(mm));
+HCSR04 hcsr04(TRIG_PIN, ECHO_PIN, 20, 4000);
+//****************** HCSR04 setting ******************//
 
 //****************** OLED setting ******************//
 #include <Wire.h>
@@ -15,13 +23,11 @@ double IR_position = 0 , setPoint = 0, outputVal = 0, KP = 0, KI = 0, KD = 0;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 //****************** OLED setting ******************//
 
-//****************** OLED setting ******************//
-#include "hcsr04.h"
-#define TRIG_PIN 10
-#define ECHO_PIN 9
-//HCSR04 hcsr04(TRIG_PIN, ECHO_PIN, min_distance(mm), max_distance(mm));
-HCSR04 hcsr04(TRIG_PIN, ECHO_PIN, 20, 4000);
-//****************** OLED setting ******************//
+//****************** PID Setting ******************//
+//pid settings and gains
+double Speed = 255, out_min = -Speed, out_max = Speed;
+double IR_position = 0 , setPoint = 0, outputVal = 0, KP = 0, KI = 0, KD = 0;
+//****************** PID Setting ******************//
 
 //pins input
 const int8_t IR1 = A7, IR2 = A6, IR3 = A3, IR4 = A2, IR5 = A1;
@@ -30,10 +36,13 @@ int IR1_max = 0,   IR2_max = 0,   IR3_max = 0,   IR4_max = 0,   IR5_max = 0;
 int IR1_avg = 0,   IR2_avg = 0,   IR3_avg = 0,   IR4_avg = 0,   IR5_avg = 0;
 
 //pins output
-const int8_t dirL1 = 2, dirL2 = A0, dirR1 = 4, dirR2 = 11, pwmL = 3, pwmR = 5, led_r = 13, led_y = 1, led_g = 0;
+const int8_t dirL1 = 2, dirR1 = 4, pwmL = 3, pwmR = 5, led_r = 13, led_y = 1, led_g = 0;
 
-const int8_t blackLine = 1, whiteLine = 0;
-int8_t offsetL = 0, offsetR = 0;
+void LED(int g, int y, int r) {
+  digitalWrite(led_r, r);
+  digitalWrite(led_y, y);
+  digitalWrite(led_g, g);
+}
 
 void oledDisplay(int8_t textSize, int8_t x, int8_t y) {
   display.clearDisplay();
@@ -43,18 +52,90 @@ void oledDisplay(int8_t textSize, int8_t x, int8_t y) {
   display.setCursor(x, y);
 }
 
-void LED(int g, int y, int r) {
-  digitalWrite(led_r, r);
-  digitalWrite(led_y, y);
-  digitalWrite(led_g, g);
+int8_t offsetL = 0, offsetR = 0;
+int8_t invert_L = 0, invert_R = 0;
+void forward(int left, int right) {
+  int outputL = left + offsetL;  if (outputL < 0) outputL = 0;
+  int outputR = right + offsetR; if (outputR < 0) outputR = 0;
+
+  //digitalWrite(dirL, 1);   digitalWrite(dirR, !1); //default direction
+  if (invert_L == 0) {
+    digitalWrite(dirL1, 1); //digitalWrite(dirL2, 0);
+  }
+  else {
+    digitalWrite(dirL1, !1); //digitalWrite(dirL2, !0);
+  }
+  if (invert_R == 0) {
+    digitalWrite(dirR1, !1); //digitalWrite(dirR2, !0);
+  }
+  else {
+    digitalWrite(dirR1, 1); //digitalWrite(dirR2, 0);
+  }
+  analogWrite(pwmL, outputL); analogWrite(pwmR, outputR);
+}
+void backward(int left, int right) {
+  //digitalWrite(dirL, 0);   digitalWrite(dirR, !0); // default direction
+  if (invert_L == 0) {
+    digitalWrite(dirL1, 0); //digitalWrite(dirL2, 1);
+  }
+  else {
+    digitalWrite(dirL1, !0); //digitalWrite(dirL2, !1);
+  }
+  if (invert_R == 0) {
+    digitalWrite(dirR1, !0); //digitalWrite(dirR2, !1);
+  }
+  else {
+    digitalWrite(dirR1, 0); //digitalWrite(dirR2, 1);
+  }
+  analogWrite(pwmL, left + offsetL); analogWrite(pwmR, right + offsetR);
+}
+void turnLeft(int left, int right) {
+  //digitalWrite(dirL, 0);   digitalWrite(dirR, !1); // default direction
+  digitalWrite(dirL1, 1); //digitalWrite(dirL2, 1);
+  if (invert_R == 0) {
+    digitalWrite(dirR1, !1); //digitalWrite(dirR2, !0);
+  }
+  else {
+    digitalWrite(dirR1, 1); //digitalWrite(dirR2, 0);
+  }
+  //analogWrite(pwmL, left + offsetL); analogWrite(pwmR, right + offsetR);
+  analogWrite(pwmL, 255); analogWrite(pwmR, right + offsetR);
+}
+void turnRight(int left, int right) {
+  //digitalWrite(dirL, 1);   digitalWrite(dirR, !0); default direction
+  if (invert_L == 0) {
+    digitalWrite(dirL1, 1); //digitalWrite(dirL2, 0);
+  }
+  else {
+    digitalWrite(dirL1, !1); //digitalWrite(dirL2, !0);
+  }
+  digitalWrite(dirR1, 1); //digitalWrite(dirR2, 1);
+  //analogWrite(pwmL, left + offsetL); analogWrite(pwmR, right + offsetR);
+  analogWrite(pwmL, left + offsetL); analogWrite(pwmR, 255);
+}
+void Stop() {
+  digitalWrite(dirL1, 1); //digitalWrite(dirL2, 1);
+  digitalWrite(dirR1, 1); //digitalWrite(dirR2, 1);
+  analogWrite(pwmL, 0); analogWrite(pwmR, 0);
+}
+
+void alignment(int alignL, int alignR, int _invert_L, int _invert_R, int align_test) {
+  invert_L = _invert_L; invert_R = _invert_R;
+  offsetL = alignL;     offsetR = alignR;
+  if (align_test == 1) {
+    forward(255, 255);
+    delay(3000);
+    Stop();
+    while (1);
+  }
 }
 
 void calibrateIR(int i) {
   oledDisplay(2, 0, 0);
   display.println(" CALBRATE ");
   display.println("----------");
-  display.println("SENSOR val");
-  display.println("    " + String(i) + "    ");
+  display.println("  SENSOR  ");
+  display.println("----------");
   display.display();
   int j = i * 100, k = 0, kk = 0, state = 0;
   do {
@@ -108,85 +189,9 @@ void calibrateIR(int i) {
   //IR1_avg = i; IR2_avg = IR1_avg; IR3_avg = IR1_avg; IR4_avg = IR1_avg; IR5_avg = IR1_avg;
 }
 
-int invert_L = 0, invert_R = 0;
-void forward(int left, int right) {
-  int outputL = left + offsetL, outputR = right + offsetR;
-  if (outputL < 0) outputL = 0;
-  if (outputR < 0) outputR = 0;
-  //digitalWrite(dirL, 1);   digitalWrite(dirR, !1); //default direction
-  if (invert_L == 0) {
-    digitalWrite(dirL1, 1); digitalWrite(dirL2, 0);
-  }
-  else {
-    digitalWrite(dirL1, !1); digitalWrite(dirL2, !0);
-  }
-  if (invert_R == 0) {
-    digitalWrite(dirR1, !1); digitalWrite(dirR2, !0);
-  }
-  else {
-    digitalWrite(dirR1, 1); digitalWrite(dirR2, 0);
-  }
-  analogWrite(pwmL, outputL); analogWrite(pwmR, outputR);
-}
-void backward(int left, int right) {
-  //digitalWrite(dirL, 0);   digitalWrite(dirR, !0); // default direction
-  if (invert_L == 0) {
-    digitalWrite(dirL1, 0); digitalWrite(dirL2, 1);
-  }
-  else {
-    digitalWrite(dirL1, !0); digitalWrite(dirL2, !1);
-  }
-  if (invert_R == 0) {
-    digitalWrite(dirR1, !0); digitalWrite(dirR2, !1);
-  }
-  else {
-    digitalWrite(dirR1, 0); digitalWrite(dirR2, 1);
-  }
-  analogWrite(pwmL, left + offsetL); analogWrite(pwmR, right + offsetR);
-}
-void turnLeft(int left, int right) {
-  //digitalWrite(dirL, 0);   digitalWrite(dirR, !1); // default direction
-  digitalWrite(dirL1, 1); digitalWrite(dirL2, 1);
-  if (invert_R == 0) {
-    digitalWrite(dirR1, !1); digitalWrite(dirR2, !0);
-  }
-  else {
-    digitalWrite(dirR1, 1); digitalWrite(dirR2, 0);
-  }
-  //analogWrite(pwmL, left + offsetL); analogWrite(pwmR, right + offsetR);
-  analogWrite(pwmL, 255); analogWrite(pwmR, right + offsetR);
-}
-void turnRight(int left, int right) {
-  //digitalWrite(dirL, 1);   digitalWrite(dirR, !0); default direction
-  if (invert_L == 0) {
-    digitalWrite(dirL1, 1); digitalWrite(dirL2, 0);
-  }
-  else {
-    digitalWrite(dirL1, !1); digitalWrite(dirL2, !0);
-  }
-  digitalWrite(dirR1, 1); digitalWrite(dirR2, 1);
-  //analogWrite(pwmL, left + offsetL); analogWrite(pwmR, right + offsetR);
-  analogWrite(pwmL, left + offsetL); analogWrite(pwmR, 255);
-}
-void Stop() {
-  digitalWrite(dirL1, 1); digitalWrite(dirL2, 1);
-  digitalWrite(dirR1, 1); digitalWrite(dirR2, 1);
-  analogWrite(pwmL, 255); analogWrite(pwmR, 255);
-}
-
-void alignment(int alignL, int alignR, int _invert_L, int _invert_R, int align_test) {
-  invert_L = _invert_L; invert_R = _invert_R;
-  offsetL = alignL;     offsetR = alignR;
-  if (align_test == 1) {
-    forward(255, 255);
-    delay(3000);
-    Stop();
-    while (1);
-  }
-}
-
+const int8_t blackLine = 1, whiteLine = 0;
 int val1 = 0, val2 = 0, val3 = 0, val4 = 0, val5 = 0;
-void update_sensor(int line, int offsetIR) {
+void update_sensor(int8_t line, int offsetIR) {
   //  while (1) {
   if (analogRead(IR1) < IR1_avg - offsetIR) val1 = 1;
   else val1 = 0;
@@ -218,8 +223,8 @@ double pid(double _setpoint, double _input, int min_out, int max_out, double KP,
   previous_time = current_time;
 
   _error = _setpoint - _input;
-  int_error += _error * elapsed_time;
-  rate_error = (_error - last_error) / elapsed_time;
+  int_error += _error * (elapsed_time / 1000);
+  rate_error = (_error - last_error) / (elapsed_time / 1000);
   last_error = _error;
 
   double _output = KP * _error + KI * int_error + KD * rate_error;
@@ -432,6 +437,14 @@ void back_to_line (int speedL, int speedR, int line, int offsetIR) { // while go
   }
 }
 
+char get_bt = ' ';
+char BT_receiver() {
+  if (BT.available() > 0) {
+    get_bt = BT.read();
+  }
+  return(get_bt);
+}
+
 long start_ms = 0;
 void bot_setup(int calibrate_time) {
   //****************** OLED setup ******************//
@@ -445,18 +458,22 @@ void bot_setup(int calibrate_time) {
   display.display();
   //****************** OLED setup ******************//
 
+  //****************** BT setup ******************//
+  pinMode(key, OUTPUT); digitalWrite(key, LOW);
+  BT.begin(9600);
+  //****************** BT setup ******************//
+
   //****************** robot setup ******************//
   pinMode(dirL1, OUTPUT);  digitalWrite(dirL1, LOW);
-  pinMode(dirL2, OUTPUT);  digitalWrite(dirL2, LOW);
+  //pinMode(dirL2, OUTPUT);  digitalWrite(dirL2, LOW);
   pinMode(dirR1, OUTPUT);  digitalWrite(dirR1, LOW);
-  pinMode(dirR2, OUTPUT);  digitalWrite(dirR2, LOW);
+  //pinMode(dirR2, OUTPUT);  digitalWrite(dirR2, LOW);
   pinMode(pwmL, OUTPUT);  digitalWrite(pwmL, LOW);
   pinMode(pwmR, OUTPUT);  digitalWrite(pwmR, LOW);
   pinMode(led_r, OUTPUT); digitalWrite(led_r, LOW);
   pinMode(led_y, OUTPUT); digitalWrite(led_y, !LOW);
   pinMode(led_g, OUTPUT); digitalWrite(led_g, !LOW);
   calibrateIR(calibrate_time);
-
   //Serial.begin(9600);
   //****************** robot setup ******************//
 
