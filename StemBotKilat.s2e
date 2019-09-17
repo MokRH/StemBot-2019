@@ -67,12 +67,12 @@
 			"w",
 			"Set_gain | Kp %n Ki %n Kd %n",
 			"Gains",
-			"0.09","0","0.5",
+			"0.1","0","5",
 			{
 				"setup":"",
 				"inc":"",
 				"def":"",
-				"work":"lineTracer.setGains({0}, {1}, {2}*1000);\n",
+				"work":"KP = {0}, KI = {1}, KD = {2};\n",
 				"loop":""
 			}
 		],
