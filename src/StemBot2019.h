@@ -38,7 +38,7 @@ int IR1_avg = 0,   IR2_avg = 0,   IR3_avg = 0,   IR4_avg = 0,   IR5_avg = 0;
 //pins output
 const int8_t dirL1 = 2, dirR1 = 4, pwmL = 3, pwmR = 5, led_r = 13, led_y = 1, led_g = 0;
 
-void LED(int g, int y, int r) {
+void LED(int r, int y, int g) {
   digitalWrite(led_r, r);
   digitalWrite(led_y, y);
   digitalWrite(led_g, g);
