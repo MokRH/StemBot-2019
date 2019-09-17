@@ -220,17 +220,17 @@
 	],
 	"menus": {
 		"action":[">","<","x"],
-		"caltime":["1_Second","2_Seconds","3_Seconds","4_Seconds","5_Seconds"],
+		"caltime":["skip","1_Second","2_Seconds","3_Seconds","4_Seconds","5_Seconds"],
 		"lineColor":["black","white"],
 		"ONOFF":["ON","OFF"],
-		"type":["Right","Left","Middle", "Dont_care"],
+		"type":["Right","Left","Middle", "Follow_line"],
 		"yes_no":["Yes","No"],
 	},
 	"values":{
 		"Yes":1,"No":0,
 		"ON":1,"OFF":0,
-		"1_Second":1,"2_Seconds":2,"3_Seconds":3,"4_Seconds":4,"5_Seconds":5,
-	    "Left":1,"Right":2,"Middle":3,"Dont_care":4,"<":11,">":22,"x":33,
+		"skip":0,"1_Second":1,"2_Seconds":2,"3_Seconds":3,"4_Seconds":4,"5_Seconds":5,
+	        "Left":1,"Right":2,"Middle":3,"Dont_care":4,"<":11,">":22,"x":33,
 		"black":1, "white":0
 	},
 	"translators":{
