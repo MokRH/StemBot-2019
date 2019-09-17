@@ -23,9 +23,9 @@
 		
 		[
 			"w",
-			"Setup | Calibrate IR sensitivity %n",
+			"Setup | Calibrate IR %m.caltime",
 			"Calibrate",
-			"64",
+			"2_Seconds",
 			{
 				"setup":"bot_setup({0});\n",
 				"inc":"",
@@ -39,7 +39,7 @@
 			"w",
 			"Alignment | Left %n Right %n || Inverted direction | Left %m.yes_no Right %m.yes_no || Test %m.yes_no",
 			"Alignment",
-			"0","0","No","No","Yes",
+			"0","0","No","No","No",
 			{
 				"setup":"alignment({0}, {1}, {2}, {3}, {4});\n",
 				"inc":"",
@@ -118,21 +118,7 @@
 				"loop":""
 		    }
 		],
-		
-		[
-			"w",
-			"Display finish time",
-			"display",
-			"",
-			{
-				"setup":"",
-				"inc":"",
-				"def":"",
-				"work":"display_finishTime();\n",
-				"loop":""
-			}
-		],
-		
+			
 		[
 			"w",
 			"Forward | Left %n Right %n",
@@ -190,20 +176,6 @@
 		],
 		
 		[
-			"w",
-			"Stop",
-			"stop",
-			"",
-			{
-				"setup":"",
-				"inc":"",
-				"def":"",
-				"work":"Stop();\n",
-				"loop":""
-			}
-		],
-		
-		[
 			"R",
 			"Get from BT",
 			"Get from BT",
@@ -215,7 +187,36 @@
 				"work":"BT_receiver()",
 				"loop":""
 			}
-		]
+		],
+		
+		[
+			"w",
+			"Display finish time",
+			"display",
+			"",
+			{
+				"setup":"",
+				"inc":"",
+				"def":"",
+				"work":"display_finishTime();\n",
+				"loop":""
+			}
+		],
+		
+		[
+			"w",
+			"Stop",
+			"stop",
+			"",
+			{
+				"setup":"",
+				"inc":"",
+				"def":"",
+				"work":"Stop();\n",
+				"loop":""
+			}
+		]		
+		
 	],
 	"menus": {
 		"action":[">","<","x"],
