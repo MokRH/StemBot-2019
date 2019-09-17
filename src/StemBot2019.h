@@ -60,58 +60,66 @@ void forward(int left, int right) {
 
   //digitalWrite(dirL, 1);   digitalWrite(dirR, !1); //default direction
   if (invert_L == 0) {
-    digitalWrite(dirL1, 1); //digitalWrite(dirL2, 0);
+    digitalWrite(dirL1, 1);
   }
   else {
-    digitalWrite(dirL1, !1); //digitalWrite(dirL2, !0);
+    digitalWrite(dirL1, !1);
   }
   if (invert_R == 0) {
-    digitalWrite(dirR1, !1); //digitalWrite(dirR2, !0);
+    digitalWrite(dirR1, !1);
   }
   else {
-    digitalWrite(dirR1, 1); //digitalWrite(dirR2, 0);
+    digitalWrite(dirR1, 1);
   }
   analogWrite(pwmL, outputL); analogWrite(pwmR, outputR);
 }
 void backward(int left, int right) {
   //digitalWrite(dirL, 0);   digitalWrite(dirR, !0); // default direction
   if (invert_L == 0) {
-    digitalWrite(dirL1, 0); //digitalWrite(dirL2, 1);
+    digitalWrite(dirL1, 0);
   }
   else {
-    digitalWrite(dirL1, !0); //digitalWrite(dirL2, !1);
+    digitalWrite(dirL1, !0);
   }
   if (invert_R == 0) {
-    digitalWrite(dirR1, !0); //digitalWrite(dirR2, !1);
+    digitalWrite(dirR1, !0);
   }
   else {
-    digitalWrite(dirR1, 0); //digitalWrite(dirR2, 1);
+    digitalWrite(dirR1, 0);
   }
   analogWrite(pwmL, left + offsetL); analogWrite(pwmR, right + offsetR);
 }
 void turnLeft(int left, int right) {
   //digitalWrite(dirL, 0);   digitalWrite(dirR, !1); // default direction
-  digitalWrite(dirL1, 1); //digitalWrite(dirL2, 1);
-  if (invert_R == 0) {
-    digitalWrite(dirR1, !1); //digitalWrite(dirR2, !0);
+  if (invert_L == 0) {
+    digitalWrite(dirL1, 0);
   }
   else {
-    digitalWrite(dirR1, 1); //digitalWrite(dirR2, 0);
+    digitalWrite(dirL1, !0);
   }
-  //analogWrite(pwmL, left + offsetL); analogWrite(pwmR, right + offsetR);
-  analogWrite(pwmL, 255); analogWrite(pwmR, right + offsetR);
+  if (invert_R == 0) {
+    digitalWrite(dirR1, !1);
+  }
+  else {
+    digitalWrite(dirR1, 1);
+  }
+  analogWrite(pwmL, left + offsetL); analogWrite(pwmR, right + offsetR);
 }
 void turnRight(int left, int right) {
   //digitalWrite(dirL, 1);   digitalWrite(dirR, !0); default direction
   if (invert_L == 0) {
-    digitalWrite(dirL1, 1); //digitalWrite(dirL2, 0);
+    digitalWrite(dirL1, 1);
   }
   else {
-    digitalWrite(dirL1, !1); //digitalWrite(dirL2, !0);
+    digitalWrite(dirL1, !1);
   }
-  digitalWrite(dirR1, 1); //digitalWrite(dirR2, 1);
-  //analogWrite(pwmL, left + offsetL); analogWrite(pwmR, right + offsetR);
-  analogWrite(pwmL, left + offsetL); analogWrite(pwmR, 255);
+  if (invert_R == 0) {
+    digitalWrite(dirR1, !0);
+  }
+  else {
+    digitalWrite(dirR1, 0);
+  }
+  analogWrite(pwmL, left + offsetL); analogWrite(pwmR, right + offsetR);
 }
 void Stop() {
   digitalWrite(dirL1, 1); //digitalWrite(dirL2, 1);
@@ -138,6 +146,7 @@ void calibrateIR(int i) {
   display.println("----------");
   display.display();
   int j = i * 100, k = 0, kk = 0, state = 0;
+  if (i == 0) k = j;
   do {
     k += 1; kk += 1;
     if (kk == 10) {
@@ -442,7 +451,7 @@ char BT_receiver() {
   if (BT.available() > 0) {
     get_bt = BT.read();
   }
-  return(get_bt);
+  return (get_bt);
 }
 
 long start_ms = 0;
