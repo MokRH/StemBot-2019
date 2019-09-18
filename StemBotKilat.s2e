@@ -41,7 +41,7 @@
 			"rename",
 			"StemBot",
 			{
-				"setup":" BT.print("AT+NAME");\nBT.print({0});\nBT.println("\r");\ndelay(500);\nBT.println("AT+RESET\r");\ndelay(500);\n",
+				"setup":"",
 				"inc":"",
 				"def":"",
 				"work":"",
