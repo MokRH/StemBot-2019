@@ -149,7 +149,6 @@ void calibrateIR(int i) {
   display.println("----------");
   display.display();
   int j = i * 100, k = 0, kk = 0, state = 0;
-  if (i == 0) k = j;
   do {
     k += 1; kk += 1;
     if (kk == 10) {
@@ -193,7 +192,7 @@ void calibrateIR(int i) {
       IR5_max = IR5_cal;
     }
   }
-  while (k != j);
+  while (i != 0 && k != j);
   IR1_avg = (IR1_min + IR1_max) / 2; IR2_avg = (IR2_min + IR2_max) / 2; IR3_avg = (IR3_min + IR3_max) / 2;
   IR4_avg = (IR4_min + IR4_max) / 2; IR5_avg = (IR5_min + IR5_max) / 2;
   LED(0, 0, 0);
