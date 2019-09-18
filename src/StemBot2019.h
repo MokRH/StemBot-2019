@@ -34,14 +34,11 @@ double IR_position = 0 , setPoint = 0, outputVal = 0, KP = 0, KI = 0, KD = 0;
 
 //pins input
 const int8_t IR1 = A7, IR2 = A6, IR3 = A3, IR4 = A2, IR5 = A1;
-int IR1_min = 255, IR2_min = 1023, IR3_min = 1023, IR4_min = 1023, IR5_min = 1023;
-int IR1_max = 0,   IR2_max = 0,   IR3_max = 0,   IR4_max = 0,   IR5_max = 0;
-int IR1_avg = 0,   IR2_avg = 0,   IR3_avg = 0,   IR4_avg = 0,   IR5_avg = 0;
 
 //pins output
 const int8_t dirL1 = 2, dirR1 = 4, pwmL = 3, pwmR = 5, led_r = 13, led_y = 1, led_g = 0;
 
-void LED(int r, int y, int g) {
+void LED(bool r, bool y, bool g) {
   digitalWrite(led_r, r);
   digitalWrite(led_y, y);
   digitalWrite(led_g, g);
@@ -141,7 +138,10 @@ void alignment(int alignL, int alignR, int _invert_L, int _invert_R, int align_t
   }
 }
 
+int IR1_avg = 0,   IR2_avg = 0,   IR3_avg = 0,   IR4_avg = 0,   IR5_avg = 0;
 void calibrateIR(int i) {
+  int IR1_min = 1023, IR2_min = 1023, IR3_min = 1023, IR4_min = 1023, IR5_min = 1023;
+  int IR1_max = 0,   IR2_max = 0,   IR3_max = 0,   IR4_max = 0,   IR5_max = 0;
   oledDisplay(2, 0, 0);
   display.println(" CALBRATE ");
   display.println("----------");
@@ -198,7 +198,6 @@ void calibrateIR(int i) {
   IR4_avg = (IR4_min + IR4_max) / 2; IR5_avg = (IR5_min + IR5_max) / 2;
   LED(0, 0, 0);
 
-  //IR1_avg = i; IR2_avg = IR1_avg; IR3_avg = IR1_avg; IR4_avg = IR1_avg; IR5_avg = IR1_avg;
 }
 
 const int8_t blackLine = 1, whiteLine = 0;
