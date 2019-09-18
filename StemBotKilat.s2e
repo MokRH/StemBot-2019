@@ -215,7 +215,27 @@
 				"work":"Stop();\n",
 				"loop":""
 			}
-		]		
+		],
+		
+
+		[
+			"w",
+			"Rename BT to %s",
+			"rename",
+			"",
+			{
+				"setup":"",
+				"inc":"",
+				"def":"",
+				"work":"  BT.print("AT+NAME");\n
+  					  BT.print({0});\n
+  					  BT.print("\r\n");\n
+  					  delay(500);\n
+ 					  BT.print("AT+RESET\r\n");\n
+  					  delay(500);\n",
+				"loop":""
+			}
+		]
 		
 	],
 	"menus": {
