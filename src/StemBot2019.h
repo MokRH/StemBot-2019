@@ -2,9 +2,6 @@
 #include <SoftwareSerial.h>
 const int8_t rx = 7, tx = 8, key = 6;
 SoftwareSerial BT(rx, tx); // RX, TX
-String ATNAME = "AT+NAME";
-String cr = "\r\n";
-String ATRESET = "AT+RESET\r\n"; 
 //****************** BT Setting ******************//
 
 //****************** HCSR04 setting ******************//
@@ -28,7 +25,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 //****************** PID Setting ******************//
 //pid settings and gains
-double Speed = 255, out_min = -Speed, out_max = Speed;
+int Speed = 255, out_min = -Speed, out_max = Speed;
 double IR_position = 0 , setPoint = 0, outputVal = 0, KP = 0, KI = 0, KD = 0;
 //****************** PID Setting ******************//
 
@@ -455,7 +452,16 @@ char BT_receiver() {
   return (get_bt);
 }
 
-long start_ms = 0;
+void rename_bt(String btname) {
+  BT.print("AT+NAME");
+  BT.print(btname);
+  BT.print("\r\n");
+  delay(500);
+  BT.println("AT+RESET\r\n");
+  delay(500);
+}
+
+unsigned long start_ms = 0;
 void bot_setup(int calibrate_time) {
   //****************** OLED setup ******************//
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
