@@ -2,6 +2,9 @@
 #include <SoftwareSerial.h>
 const int8_t rx = 7, tx = 8, key = 6;
 SoftwareSerial BT(rx, tx); // RX, TX
+String ATNAME = "AT+NAME";
+String cr = "\r\n";
+String ATRESET = "AT+RESET\r\n"; 
 //****************** BT Setting ******************//
 
 //****************** HCSR04 setting ******************//
