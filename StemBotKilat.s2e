@@ -10,28 +10,15 @@
 	"blockSpecs": [
 		[
 			"h",
-			"StemBot Kilat",
+			"StemBot Kilat | Calibrate IR %m.caltime",
 			"runArduino",
+			"2_Seconds",
 			{
-				"setup":"",
+				"setup":"bot_setup({0});\n",
 				"inc": "#include \"StemBot2019.h\"\n",
 				"def": "",
 				"work": "",
 				"loop": ""
-			}
-		],
-		
-		[
-			"w",
-			"Setup | Calibrate IR %m.caltime",
-			"Calibrate",
-			"2_Seconds",
-			{
-				"setup":"bot_setup({0});\n",
-				"inc":"",
-				"def":"",
-				"work":"",
-				"loop":""
 			}
 		],
 		
