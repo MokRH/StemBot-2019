@@ -215,20 +215,6 @@
 				"work":"Stop();\n",
 				"loop":""
 			}
-		],
-		
-		[
-			"w",
-			"Rename BT to %s",
-			"rename",
-			"StemBot",
-			{
-				"setup":" BT.print("AT+NAME");\nBT.print({0});\nBT.print("\r\n");\ndelay(500);\nBT.print("AT+RESET\r\n");\ndelay(500);\n",
-				"inc":"",
-				"def":"",
-				"work":"",
-				"loop":""
-			}
 		]
 		
 	],
