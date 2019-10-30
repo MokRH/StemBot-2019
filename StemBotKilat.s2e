@@ -13,7 +13,7 @@
 			"StemBot Kilat",
 			"runArduino",			
 			{
-				"setup":"bot_setup({0});\n",
+				"setup":"",
 				"inc": "#include \"StemBot2019.h\"\n",
 				"def": "",
 				"work": "",
