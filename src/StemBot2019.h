@@ -84,7 +84,7 @@ void backward(int left, int right) {
   else {
     digitalWrite(dirR1, 0);
   }
-  analogWrite(pwmL, left + offsetL); analogWrite(pwmR, right + offsetR);
+  analogWrite(pwmL, left + offsetL); analogWrite(pwmR, right + offsetR); 
 }
 void turnLeft(int left, int right) {
   //digitalWrite(dirL, 0);   digitalWrite(dirR, !1); // default direction
@@ -384,6 +384,17 @@ void junction(int speed_M, int trace_back, int TYPE, int action, int delay_b4_tu
       }
       else if (TYPE == 4 && action == 33 && delay_b4_turn == -1) { // dont care, loop forever
         // loop forever
+      }
+    }
+    else { // robot is OFF line (trace back)
+      if (IR_position < setPoint) { // last position is on the LEFT before lost
+        LED(0, 0, 1);
+        turnLeft(trace_back, trace_back);
+      }
+      else{
+      //else if (IR_position >= setPoint) { // last position is on the RIGHT before lost
+        LED(1, 0, 0);
+        turnRight(trace_back, trace_back);
       }
     }
   }
