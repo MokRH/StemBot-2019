@@ -244,7 +244,7 @@
 		"Yes":1,"No":0,
 		"ON":1,"OFF":0,
 		"skip":0,"1_Second":1,"2_Seconds":2,"3_Seconds":3,"4_Seconds":4,"5_Seconds":5,
-	        "Left":1,"Right":2,"Middle":3,"Dont_care":4,"<":11,">":22,"x":33,
+	        "Left":1,"Right":2,"Middle":3,"Follow_line":4,"<":11,">":22,"x":33,
 		"black":1, "white":0
 	},
 	"translators":{
