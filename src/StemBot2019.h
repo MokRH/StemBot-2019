@@ -78,7 +78,7 @@ void backward(int left, int right) {
   else {
     digitalWrite(dirR1, 0);
   }
-  analogWrite(pwmL, left + offsetL); analogWrite(pwmR, right + offsetR); 
+  analogWrite(pwmL, left + offsetL); analogWrite(pwmR, right + offsetR);
 }
 void turnLeft(int left, int right) {
   //digitalWrite(dirL, 0);   digitalWrite(dirR, !1); // default direction
@@ -193,7 +193,7 @@ void calibrateIR(int i) {
 const int8_t blackLine = 1, whiteLine = 0;
 int val1 = 0, val2 = 0, val3 = 0, val4 = 0, val5 = 0;
 void update_sensor(int8_t line, int offsetIR) {
-  //  while (1) {
+//    while (1) {
   if (analogRead(IR1) < IR1_avg - offsetIR) val1 = 1;
   else val1 = 0;
   if (analogRead(IR2) < IR2_avg - offsetIR) val2 = 1;
@@ -209,40 +209,40 @@ void update_sensor(int8_t line, int offsetIR) {
   }
   else if (line == whiteLine);
 
-  //    oledDisplay(2, 0, 0);
-  //    display.println("  " + String(val2) + " " + String(val3) + "  " + String(val4) + "  ");
-  //    display.println(String(val1) + " " + String(val2B) + "    " + String(val4B) + " " + String(val5));
-  //    display.display();
-  //  }
+//      oledDisplay(2, 0, 0);
+//      display.println("  " + String(val2) + " " + String(val3) + " " + String(val4) + "  ");
+//      display.println(String(val1) + "       " + String(val5));
+//      display.display();
+//    }
 }
 
 unsigned long previous_time = 0, current_time = 0, elapsed_time = 0;
 double last_error = 0, _error = 0, int_error = 0, rate_error = 0;
-double pid(double _setpoint, double _input, int min_out, int max_out, double KP, double KI, double KD) {
+double pid(double _setpoint, double _input, int min_out, int max_out) {
   current_time = millis();
   elapsed_time = current_time - previous_time;
   previous_time = current_time;
 
   _error = _setpoint - _input;
-  int_error += _error * (elapsed_time / 1000);
-  rate_error = (_error - last_error) / (elapsed_time / 1000);
+  int_error += _error * (elapsed_time);  if(int_error < -1000) int_error = -1000;
+                                         if(int_error >  1000) int_error =  1000;
+  rate_error = (_error - last_error) / (elapsed_time);
   last_error = _error;
 
-  double _output = KP * _error + KI * int_error + KD * rate_error;
+  double _output = KP * _error + KI * int_error - KD * rate_error;
   if (_output < out_min) {
     _output = out_min;
   }
   else if (_output > out_max) {
     _output = out_max;
   }
-
   return (_output);
 }
 
 void followLine(int speedL, int speedR) {
   setPoint = 1000;
-  outputVal = pid(setPoint, IR_position, out_min, out_max, KP, KI, KD);
-
+  outputVal = pid(setPoint, IR_position, out_min, out_max);
+  
   if (outputVal > 0) { // line is on the LEFT of robot
     //LED(1, 1, 0);
     forward(speedL - outputVal, speedR);
@@ -255,10 +255,11 @@ void followLine(int speedL, int speedR) {
     //LED(0, 1, 1);
     forward(speedL, speedR + outputVal);
   }
-  //    oledDisplay(2, 0, 0);
-  //    display.println("pos:\n" + String(IR_position));
-  //    display.println("outV:\n" + String(outputVal));
-  //    display.display();
+      LED(0, 1, 0);
+//      oledDisplay(2, 0, 0);
+//      display.println(IR_position);
+//      display.println(outputVal);
+//      display.display();
 }
 
 void junction(int speed_M, int trace_back, int TYPE, int action, int delay_b4_turn, int turn_speed, int turn_duration, int line, int offsetIR) {
@@ -270,7 +271,7 @@ void junction(int speed_M, int trace_back, int TYPE, int action, int delay_b4_tu
     int valSum = val1 + val2 + val3 + val4 + val5; // calculate line state value
     if (valSum > 0) { // robot is ON line
       IR_position = (val1 * 0 + val2 * 500 + val3 * 1000 + val4 * 1500 + val5 * 2000) / valSum;
-      followLine(speed_M, speed_M);
+      followLine(speed_M, speed_M); 
       if (TYPE == 1 && action == 11 && val1 == 1 && (val3 == 1 || val4 == 1) && val5 == 0) { // Left junction, turn left
         delay(delay_b4_turn);
         turnLeft(turn_speed, turn_speed);
@@ -385,8 +386,8 @@ void junction(int speed_M, int trace_back, int TYPE, int action, int delay_b4_tu
         LED(0, 0, 1);
         turnLeft(trace_back, trace_back);
       }
-      else{
-      //else if (IR_position >= setPoint) { // last position is on the RIGHT before lost
+      else {
+        //else if (IR_position >= setPoint) { // last position is on the RIGHT before lost
         LED(1, 0, 0);
         turnRight(trace_back, trace_back);
       }
