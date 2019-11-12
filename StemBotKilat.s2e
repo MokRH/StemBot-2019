@@ -205,20 +205,6 @@
 		
 		[
 			"w",
-			"Display finish time",
-			"display",
-			"",
-			{
-				"setup":"",
-				"inc":"",
-				"def":"",
-				"work":"display_finishTime();\n",
-				"loop":""
-			}
-		],
-		
-		[
-			"w",
 			"Stop",
 			"stop",
 			"",
@@ -227,6 +213,20 @@
 				"inc":"",
 				"def":"",
 				"work":"Stop();\n",
+				"loop":""
+			}
+		],
+		
+		[
+			"w",
+			"Display finish time",
+			"display",
+			"",
+			{
+				"setup":"",
+				"inc":"",
+				"def":"",
+				"work":"display_finishTime();\n",
 				"loop":""
 			}
 		]
