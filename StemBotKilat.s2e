@@ -42,7 +42,7 @@
 			"StemBot","No",
 			{
 				"setup":"bt_setup();\nrename_bt({0},{1});\n",
-				"inc":"#include "StemBot2019.h"\n#include \"bluetooth.h\"\n",
+				"inc":"#include \"StemBot2019.h\"\n#include \"bluetooth.h\"\n",
 				"def":"",
 				"work":"",
 				"loop":""
