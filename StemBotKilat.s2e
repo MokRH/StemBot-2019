@@ -42,7 +42,7 @@
 			"StemBot","No",
 			{
 				"setup":"bt_setup();\nrename_bt({0},{1});\n",
-				"inc":"#include \"bluetooth.h\"\n",
+				"inc":"#include \"TBluetooth.h\"\n",
 				"def":"",
 				"work":"",
 				"loop":""
@@ -140,7 +140,7 @@
 			"",
 			{
 				"setup":"bt_setup();\n",
-				"inc":"#include \"bluetooth.h\"\n",
+				"inc":"#include \"TBluetooth.h\"\n",
 				"def":"",
 				"work":"BT_receiver({0})",
 				"loop":""
