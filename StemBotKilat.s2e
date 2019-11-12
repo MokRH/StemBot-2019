@@ -137,7 +137,7 @@
 			"R",
 			"Get from BT || Diaplay char %m.yes_no",
 			"Get from BT",
-			"",
+			"No",
 			{
 				"setup":"bt_setup();\n",
 				"inc":"",
