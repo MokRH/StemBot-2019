@@ -14,7 +14,7 @@
 			"runArduino",			
 			{
 				"setup":"",
-				"inc": "#include \"StemBot2019.h\"\n",
+				"inc": "",
 				"def": "",
 				"work": "",
 				"loop": ""
@@ -28,7 +28,7 @@
 			"2_Seconds",
 			{
 				"setup":"bot_setup({0});\n",
-				"inc":"",
+				"inc":"#include \"StemBot2019.h\"\n",
 				"def":"",
 				"work":"",
 				"loop":""
@@ -42,7 +42,7 @@
 			"StemBot","No",
 			{
 				"setup":"bt_setup();\nrename_bt({0},{1});\n",
-				"inc":"#include \"TBluetooth.h\"\n",
+				"inc":"#include \"bluetooth.h\"\n",
 				"def":"",
 				"work":"",
 				"loop":""
@@ -140,7 +140,7 @@
 			"",
 			{
 				"setup":"bt_setup();\n",
-				"inc":"#include \"TBluetooth.h\"\n",
+				"inc":"#include \"bluetooth.h\"\n",
 				"def":"",
 				"work":"BT_receiver({0})",
 				"loop":""
