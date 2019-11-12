@@ -37,7 +37,7 @@
 		
 		[
 			"w",
-			"Rename BT to %s" || Check name %m.yes_no,
+			"Rename BT to %s || Check name %m.yes_no",
 			"rename",
 			"StemBot","No",
 			{
