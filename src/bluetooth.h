@@ -37,6 +37,8 @@ void rename_bt(String btname, int8_t display_name) {
     display.println(btname);
     display.display();
   }
+  
+  delay(2000);
 }
 
 void bt_setup() {
