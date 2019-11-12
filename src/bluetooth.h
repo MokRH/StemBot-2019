@@ -21,7 +21,7 @@ char BT_receiver(int8_t display_getBT) {
   return (get_bt);
 }
 
-void rename_bt(String btname, int8_t display_name) {
+void rename_bt(char btname[], int8_t display_name) {
   BT.print("AT+NAME");
   BT.print(btname);
   BT.print("\r\n");
