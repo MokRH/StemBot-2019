@@ -140,8 +140,8 @@
 			"",
 			{
 				"setup":"bt_setup();\n",
-				"inc":"#include \"bluetooth.h\"\n",
-				"def":"",
+				"inc":"",
+				"def":"#include \"bluetooth.h\"\n",
 				"work":"BT_receiver({0})",
 				"loop":""
 			}
