@@ -1,4 +1,3 @@
-#include "StemBot2019.h"
 //****************** BT Setting ******************//
 #include <SoftwareSerial.h>
 const int8_t rx = 7, tx = 8, key = 6;
