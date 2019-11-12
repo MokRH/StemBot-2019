@@ -10,7 +10,7 @@ char BT_receiver(int8_t display_getBT) {
     get_bt = BT.read();
 
     if (display_getBT == 0);
-    else if (display_getBT == 0) {
+    else if (display_getBT == 1) {
       oledDisplay(2, 0, 0);
       display.println("Controller");
       display.print("signal = ");
