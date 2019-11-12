@@ -132,6 +132,20 @@
 				"loop":""
 		    }
 		],
+		
+		[
+			"R",
+			"Get from BT",
+			"Get from BT",
+			"",
+			{
+				"setup":"bt_setup();\n",
+				"inc":"#include \"bluetooth.h\"\n",
+				"def":"",
+				"work":"BT_receiver()",
+				"loop":""
+			}
+		],
 			
 		[
 			"w",
@@ -188,21 +202,7 @@
 				"loop":""
 			}
 		],
-		
-		[
-			"R",
-			"Get from BT",
-			"Get from BT",
-			"",
-			{
-				"setup":"bt_setup();\n",
-				"inc":"#include \"bluetooth.h\"\n",
-				"def":"",
-				"work":"BT_receiver()",
-				"loop":""
-			}
-		],
-		
+			
 		[
 			"w",
 			"Stop",
