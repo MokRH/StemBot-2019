@@ -37,11 +37,11 @@
 		
 		[
 			"w",
-			"Rename BT to %s",
+			"Rename BT to %s" || Check name %m.yes_no,
 			"rename",
-			"StemBot",
+			"StemBot","No",
 			{
-				"setup":"bt_setup();\nrename_bt({0});\n",
+				"setup":"bt_setup();\nrename_bt({0},{1});\n",
 				"inc":"#include \"bluetooth.h\"\n",
 				"def":"",
 				"work":"",
@@ -135,14 +135,14 @@
 		
 		[
 			"R",
-			"Get from BT",
+			"Get from BT || Diaplay char %m.yes_no",
 			"Get from BT",
 			"",
 			{
 				"setup":"bt_setup();\n",
 				"inc":"#include \"bluetooth.h\"\n",
 				"def":"",
-				"work":"BT_receiver()",
+				"work":"BT_receiver({0})",
 				"loop":""
 			}
 		],
