@@ -14,8 +14,8 @@
 			"runArduino",			
 			{
 				"setup":"",
-				"inc": "#include \"StemBot2019.h\"\n",
-				"def": "",
+				"inc": "",
+				"def": "#include \"StemBot2019.h\"\n",
 				"work": "",
 				"loop": ""
 			}
