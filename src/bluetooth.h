@@ -11,11 +11,13 @@ char BT_receiver(int8_t display_getBT) {
 
     if (display_getBT == 0);
     else if (display_getBT == 1) {
+      #ifdef OLED
       oledDisplay(2, 0, 0);
       display.println("Controller");
       display.print("signal = ");
       display.print(get_bt);
       display.display();
+      #endif
     }
   }
   return (get_bt);
@@ -31,11 +33,13 @@ void rename_bt(char btname[], int8_t display_name) {
 
   if (display_name == 0);
   else if (display_name == 1) {
+    #ifdef OLED
     oledDisplay(2, 0, 0);
     display.println("My name is");
     display.println("----------");
     display.println(btname);
     display.display();
+    #endif
   }
   
   delay(2000);
