@@ -7,6 +7,7 @@ HCSR04 hcsr04(TRIG_PIN, ECHO_PIN, 20, 4000);
 //****************** HCSR04 setting ******************//
 
 //****************** OLED setting ******************//
+#ifdef OLED
 #include <Wire.h>
 #include "Adafruit_GFX.h"
 #include "Adafruit_SSD1306.h"
@@ -15,6 +16,7 @@ HCSR04 hcsr04(TRIG_PIN, ECHO_PIN, 20, 4000);
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 #define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+#endif
 //****************** OLED setting ******************//
 
 //****************** PID Setting ******************//
@@ -36,11 +38,13 @@ void LED(bool r, bool y, bool g) {
 }
 
 void oledDisplay(int8_t textSize, int8_t x, int8_t y) {
+  #ifdef OLED
   display.clearDisplay();
   display.display();
   display.setTextSize(textSize);
   display.setTextColor(WHITE);
   display.setCursor(x, y);
+  #endif
 }
 
 int8_t offsetL = 0, offsetR = 0;
@@ -133,12 +137,14 @@ int IR1_avg = 0,   IR2_avg = 0,   IR3_avg = 0,   IR4_avg = 0,   IR5_avg = 0;
 void calibrateIR(int i) {
   int IR1_min = 1023, IR2_min = 1023, IR3_min = 1023, IR4_min = 1023, IR5_min = 1023;
   int IR1_max = 0,   IR2_max = 0,   IR3_max = 0,   IR4_max = 0,   IR5_max = 0;
+  #ifdef OLED
   oledDisplay(2, 0, 0);
   display.println(" CALBRATE ");
   display.println("----------");
   display.println("  SENSOR  ");
   display.println("----------");
   display.display();
+  #endif
   int j = i * 100, k = 0, kk = 0, state = 0;
   do {
     k += 1; kk += 1;
@@ -193,7 +199,7 @@ void calibrateIR(int i) {
 const int8_t blackLine = 1, whiteLine = 0;
 int val1 = 0, val2 = 0, val3 = 0, val4 = 0, val5 = 0;
 void update_sensor(int8_t line, int offsetIR) {
-//    while (1) {
+  //    while (1) {
   if (analogRead(IR1) < IR1_avg - offsetIR) val1 = 1;
   else val1 = 0;
   if (analogRead(IR2) < IR2_avg - offsetIR) val2 = 1;
@@ -209,11 +215,11 @@ void update_sensor(int8_t line, int offsetIR) {
   }
   else if (line == whiteLine);
 
-//      oledDisplay(2, 0, 0);
-//      display.println("  " + String(val2) + " " + String(val3) + " " + String(val4) + "  ");
-//      display.println(String(val1) + "       " + String(val5));
-//      display.display();
-//    }
+  //      oledDisplay(2, 0, 0);
+  //      display.println("  " + String(val2) + " " + String(val3) + " " + String(val4) + "  ");
+  //      display.println(String(val1) + "       " + String(val5));
+  //      display.display();
+  //    }
 }
 
 unsigned long previous_time = 0, current_time = 0, elapsed_time = 0;
@@ -224,8 +230,8 @@ double pid(double _setpoint, double _input, int min_out, int max_out) {
   previous_time = current_time;
 
   _error = _setpoint - _input;
-  int_error += _error * (elapsed_time);  if(int_error < -1000) int_error = -1000;
-                                         if(int_error >  1000) int_error =  1000;
+  int_error += _error * (elapsed_time);  if (int_error < -1000) int_error = -1000;
+  if (int_error >  1000) int_error =  1000;
   rate_error = (_error - last_error) / (elapsed_time);
   last_error = _error;
 
@@ -242,7 +248,7 @@ double pid(double _setpoint, double _input, int min_out, int max_out) {
 void followLine(int speedL, int speedR) {
   setPoint = 1000;
   outputVal = pid(setPoint, IR_position, out_min, out_max);
-  
+
   if (outputVal > 0) { // line is on the LEFT of robot
     //LED(1, 1, 0);
     forward(speedL - outputVal, speedR);
@@ -255,11 +261,11 @@ void followLine(int speedL, int speedR) {
     //LED(0, 1, 1);
     forward(speedL, speedR + outputVal);
   }
-      LED(0, 1, 0);
-//      oledDisplay(2, 0, 0);
-//      display.println(IR_position);
-//      display.println(outputVal);
-//      display.display();
+  LED(0, 1, 0);
+  //      oledDisplay(2, 0, 0);
+  //      display.println(IR_position);
+  //      display.println(outputVal);
+  //      display.display();
 }
 
 void junction(int speed_M, int trace_back, int TYPE, int action, int delay_b4_turn, int turn_speed, int turn_duration, int line, int offsetIR) {
@@ -271,7 +277,7 @@ void junction(int speed_M, int trace_back, int TYPE, int action, int delay_b4_tu
     int valSum = val1 + val2 + val3 + val4 + val5; // calculate line state value
     if (valSum > 0) { // robot is ON line
       IR_position = (val1 * 0 + val2 * 500 + val3 * 1000 + val4 * 1500 + val5 * 2000) / valSum;
-      followLine(speed_M, speed_M); 
+      followLine(speed_M, speed_M);
       if (TYPE == 1 && action == 11 && val1 == 1 && (val3 == 1 || val4 == 1) && val5 == 0) { // Left junction, turn left
         delay(delay_b4_turn);
         turnLeft(turn_speed, turn_speed);
@@ -453,6 +459,7 @@ void back_to_line (int speedL, int speedR, int line, int offsetIR) { // while go
 unsigned long start_ms = 0;
 void bot_setup(int calibrate_time) {
   //****************** OLED setup ******************//
+  #ifdef OLED
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
     Serial.println(F("SSD1306 allocation failed"));
@@ -461,6 +468,7 @@ void bot_setup(int calibrate_time) {
   // Show initial display buffer contents on the screen --
   // the library initializes this with an Adafruit splash screen.
   display.display();
+  #endif
   //****************** OLED setup ******************//
 
   //****************** robot setup ******************//
@@ -478,6 +486,7 @@ void bot_setup(int calibrate_time) {
   //****************** robot setup ******************//
 
   //****************** tell user ready to go ******************//
+  #ifdef OLED
   oledDisplay(2, 0, 0);
   display.println("All system");
   display.println("");
@@ -490,6 +499,7 @@ void bot_setup(int calibrate_time) {
   display.println("  ..GO..  ");
   display.display();
   delay(500);
+  #endif
   //****************** tell user ready to go ******************//
 
   start_ms = millis();
@@ -508,6 +518,7 @@ void display_finishTime() {
     minute += 1;
     second -= 60;
   }
+  #ifdef OLED
   oledDisplay(3, 0, 0);
   display.println("FINISH!");
   display.setTextSize(2);
@@ -532,6 +543,7 @@ void display_finishTime() {
     display.print(ms / 10); display.print("");
   }
   display.display();
+  #endif
   //****************** display finish time ******************//
 
   while (1);
