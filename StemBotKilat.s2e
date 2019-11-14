@@ -23,6 +23,20 @@
 		
 		[
 			"w",
+			"Enable OLED",
+			"OLED",
+			"",
+			{
+				"setup":"",
+				"inc":"#define OLED",
+				"def":"",
+				"work":"",
+				"loop":""
+			}
+		],
+		
+		[
+			"w",
 			"Setup | Calibrate IR %m.caltime",
 			"setup",
 			"2_Seconds",
