@@ -301,21 +301,21 @@ void junction(int speed_M, int trace_back, int TYPE, int action, int delay_b4_tu
         }
         break;
       }
-      else if (TYPE == 3 && action == 11 && ((val1 == 1 && val5 == 1) || (val1 == 1 && val4 == 1) || (val2 == 1 && val5 == 1) || (val2 == 1 && val3 == 1))) { // middle junction, turn left
+      else if (TYPE == 3 && action == 11 && (val1 == 1 && val5 == 1)) { // middle junction, turn left
         delay(delay_b4_turn);
         turnLeft(turn_speed, turn_speed);
         delay(turn_duration);
         IR_position = setPoint - 100;
         break;
       }
-      else if (TYPE == 3 && action == 22 && ((val1 == 1 && val5 == 1) || (val1 == 1 && val4 == 1) || (val2 == 1 && val5 == 1) || (val2 == 1 && val3 == 1))) { // middle junction, turn right
+      else if (TYPE == 3 && action == 22 && (val1 == 1 && val5 == 1)) { // middle junction, turn right
         delay(delay_b4_turn);
         turnRight(turn_speed, turn_speed);
         delay(turn_duration);
         IR_position = setPoint + 100;
         break;
       }
-      else if (TYPE == 3 && action == 33 && ((val1 == 1 && val5 == 1) || (val1 == 1 && val4 == 1) || (val2 == 1 && val5 == 1) || (val2 == 1 && val3 == 1))) { // middle junction, ignore
+      else if (TYPE == 3 && action == 33 && (val1 == 1 && val5 == 1)) { // middle junction, ignore
         while (val1 == 1 && val5 == 1) { // make sure robot passed junction
           if (analogRead(IR1) < IR1_avg - offsetIR) val1 = 1;
           else val1 = 0;
