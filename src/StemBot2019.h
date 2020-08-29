@@ -1,7 +1,7 @@
 //****************** HCSR04 setting ******************//
 #include "hcsr04.h"
-#define TRIG_PIN 10
-#define ECHO_PIN 9
+#define TRIG_PIN 5
+#define ECHO_PIN 7
 //HCSR04 hcsr04(TRIG_PIN, ECHO_PIN, min_distance(mm), max_distance(mm));
 HCSR04 hcsr04(TRIG_PIN, ECHO_PIN, 20, 4000);
 //****************** HCSR04 setting ******************//
@@ -27,9 +27,10 @@ double IR_position = 0 , setPoint = 0, outputVal = 0, KP = 0, KI = 0, KD = 0;
 
 //pins input
 const int8_t IR1 = A7, IR2 = A6, IR3 = A3, IR4 = A2, IR5 = A1;
+const int8_t battMon_pin = A0;
 
 //pins output
-const int8_t dirL1 = 2, dirR1 = 4, pwmL = 3, pwmR = 5, led_r = 13, led_y = 1, led_g = 0;
+const int8_t pwmL1 = 3, pwmL2 = 5, pwmR1 = 9, pwmR2 = 10, led_r = 13, led_y = 1, led_g = 0, battMon_en = 6;
 
 void LED(bool r, bool y, bool g) {
   digitalWrite(led_r, r);
@@ -38,13 +39,13 @@ void LED(bool r, bool y, bool g) {
 }
 
 void oledDisplay(int8_t textSize, int8_t x, int8_t y) {
-  #ifdef OLED
+#ifdef OLED
   display.clearDisplay();
   display.display();
   display.setTextSize(textSize);
   display.setTextColor(WHITE);
   display.setCursor(x, y);
-  #endif
+#endif
 }
 
 int8_t offsetL = 0, offsetR = 0;
@@ -52,74 +53,88 @@ int8_t invert_L = 0, invert_R = 0;
 void forward(int left, int right) {
   int outputL = left + offsetL;  if (outputL < 0) outputL = 0;
   int outputR = right + offsetR; if (outputR < 0) outputR = 0;
-
-  //digitalWrite(dirL, 1);   digitalWrite(dirR, !1); //default direction
   if (invert_L == 0) {
-    digitalWrite(dirL1, 1);
+    digitalWrite(pwmL2, 0);
+    analogWrite(pwmL1, outputL);
   }
   else {
-    digitalWrite(dirL1, !1);
+    digitalWrite(pwmL1, 0);
+    analogWrite(pwmL2, outputL);
   }
   if (invert_R == 0) {
-    digitalWrite(dirR1, !1);
+    digitalWrite(pwmR2, 0);
+    analogWrite(pwmR1, outputR);
   }
   else {
-    digitalWrite(dirR1, 1);
+    digitalWrite(pwmR1, 0);
+    analogWrite(pwmR2, outputR);
   }
-  analogWrite(pwmL, outputL); analogWrite(pwmR, outputR);
 }
 void backward(int left, int right) {
-  //digitalWrite(dirL, 0);   digitalWrite(dirR, !0); // default direction
+  int outputL = left + offsetL;  if (outputL < 0) outputL = 0;
+  int outputR = right + offsetR; if (outputR < 0) outputR = 0;
   if (invert_L == 0) {
-    digitalWrite(dirL1, 0);
+    digitalWrite(pwmL1, 0);
+    analogWrite(pwmL2, outputL);
   }
   else {
-    digitalWrite(dirL1, !0);
+    digitalWrite(pwmL2, 0);
+    analogWrite(pwmL1, outputL);
   }
   if (invert_R == 0) {
-    digitalWrite(dirR1, !0);
+    digitalWrite(pwmR1, 0);
+    analogWrite(pwmR2, outputR);
   }
   else {
-    digitalWrite(dirR1, 0);
+    digitalWrite(pwmR2, 0);
+    analogWrite(pwmR1, outputR);
   }
-  analogWrite(pwmL, left + offsetL); analogWrite(pwmR, right + offsetR);
 }
+
 void turnLeft(int left, int right) {
-  //digitalWrite(dirL, 0);   digitalWrite(dirR, !1); // default direction
+  int outputL = left + offsetL;  if (outputL < 0) outputL = 0;
+  int outputR = right + offsetR; if (outputR < 0) outputR = 0;
   if (invert_L == 0) {
-    digitalWrite(dirL1, 0);
+    digitalWrite(pwmL1, 0);
+    analogWrite(pwmL2, outputL);
   }
   else {
-    digitalWrite(dirL1, !0);
+    digitalWrite(pwmL2, 0);
+    analogWrite(pwmL1, outputL);
   }
   if (invert_R == 0) {
-    digitalWrite(dirR1, !1);
+    digitalWrite(pwmR2, 0);
+    analogWrite(pwmR1, outputR);
   }
   else {
-    digitalWrite(dirR1, 1);
+    digitalWrite(pwmR1, 0);
+    analogWrite(pwmR2, outputR);
   }
-  analogWrite(pwmL, left + offsetL); analogWrite(pwmR, right + offsetR);
 }
 void turnRight(int left, int right) {
-  //digitalWrite(dirL, 1);   digitalWrite(dirR, !0); default direction
+  int outputL = left + offsetL;  if (outputL < 0) outputL = 0;
+  int outputR = right + offsetR; if (outputR < 0) outputR = 0;
   if (invert_L == 0) {
-    digitalWrite(dirL1, 1);
+    digitalWrite(pwmL2, 0);
+    analogWrite(pwmL1, outputL);
   }
   else {
-    digitalWrite(dirL1, !1);
+    digitalWrite(pwmL1, 0);
+    analogWrite(pwmL2, outputL);
   }
   if (invert_R == 0) {
-    digitalWrite(dirR1, !0);
+    digitalWrite(pwmR1, 0);
+    analogWrite(pwmR2, outputR);
   }
   else {
-    digitalWrite(dirR1, 0);
+    digitalWrite(pwmR2, 0);
+    analogWrite(pwmR1, outputR);
   }
-  analogWrite(pwmL, left + offsetL); analogWrite(pwmR, right + offsetR);
 }
+
 void Stop() {
-  digitalWrite(dirL1, 1); //digitalWrite(dirL2, 1);
-  digitalWrite(dirR1, 1); //digitalWrite(dirR2, 1);
-  analogWrite(pwmL, 0); analogWrite(pwmR, 0);
+  digitalWrite(pwmL1, 1); digitalWrite(pwmL2, 1);
+  digitalWrite(pwmR1, 1); digitalWrite(pwmR2, 1);
 }
 
 void alignment(int alignL, int alignR, int _invert_L, int _invert_R, int align_test) {
@@ -127,24 +142,30 @@ void alignment(int alignL, int alignR, int _invert_L, int _invert_R, int align_t
   offsetL = alignL;     offsetR = alignR;
   if (align_test == 1) {
     forward(255, 255);
-    delay(3000);
+    delay(2000);
     Stop();
     while (1);
   }
 }
 
 int IR1_avg = 0,   IR2_avg = 0,   IR3_avg = 0,   IR4_avg = 0,   IR5_avg = 0;
-void calibrateIR(int i) {
+void calibrateIR(int i, int auto_) {
   int IR1_min = 1023, IR2_min = 1023, IR3_min = 1023, IR4_min = 1023, IR5_min = 1023;
   int IR1_max = 0,   IR2_max = 0,   IR3_max = 0,   IR4_max = 0,   IR5_max = 0;
-  #ifdef OLED
+#ifdef OLED
   oledDisplay(2, 0, 0);
   display.println(" CALBRATE ");
   display.println("----------");
   display.println("  SENSOR  ");
-  display.println("----------");
-  display.display();
-  #endif
+  if (auto_ == 0) {
+    display.println("--manual--");
+    display.display();
+  }
+  else {
+    display.println("---auto---");
+    display.display();
+  }
+#endif
   int j = i * 100, k = 0, kk = 0, state = 0;
   do {
     k += 1; kk += 1;
@@ -153,45 +174,90 @@ void calibrateIR(int i) {
       state = !state;
       LED(state, state, state);
     }
-    int IR1_cal = analogRead(IR1); delay(2);
-    if (IR1_cal < IR1_min) {
-      IR1_min = IR1_cal;
+    if (auto_ == 0) { //manual calibrate
+      int IR1_cal = analogRead(IR1); delay(2);
+      if (IR1_cal < IR1_min) {
+        IR1_min = IR1_cal;
+      }
+      else if (IR1_cal > IR1_max) {
+        IR1_max = IR1_cal;
+      }
+      int IR2_cal = analogRead(IR2); delay(2);
+      if (IR2_cal < IR2_min) {
+        IR2_min = IR2_cal;
+      }
+      else if (IR2_cal > IR2_max) {
+        IR2_max = IR2_cal;
+      }
+      int IR3_cal = analogRead(IR3); delay(2);
+      if (IR3_cal < IR3_min) {
+        IR3_min = IR3_cal;
+      }
+      else if (IR3_cal > IR3_max) {
+        IR3_max = IR3_cal;
+      }
+      int IR4_cal = analogRead(IR4); delay(2);
+      if (IR4_cal < IR4_min) {
+        IR4_min = IR4_cal;
+      }
+      else if (IR4_cal > IR4_max) {
+        IR1_max = IR4_cal;
+      }
+      int IR5_cal = analogRead(IR5); delay(2);
+      if (IR5_cal < IR5_min) {
+        IR5_min = IR5_cal;
+      }
+      else if (IR5_cal > IR5_max) {
+        IR5_max = IR5_cal;
+      }
     }
-    else if (IR1_cal > IR1_max) {
-      IR1_max = IR1_cal;
-    }
-    int IR2_cal = analogRead(IR2); delay(2);
-    if (IR2_cal < IR2_min) {
-      IR2_min = IR2_cal;
-    }
-    else if (IR2_cal > IR2_max) {
-      IR2_max = IR2_cal;
-    }
-    int IR3_cal = analogRead(IR3); delay(2);
-    if (IR3_cal < IR3_min) {
-      IR3_min = IR3_cal;
-    }
-    else if (IR3_cal > IR3_max) {
-      IR3_max = IR3_cal;
-    }
-    int IR4_cal = analogRead(IR4); delay(2);
-    if (IR4_cal < IR4_min) {
-      IR4_min = IR4_cal;
-    }
-    else if (IR4_cal > IR4_max) {
-      IR4_max = IR4_cal;
-    }
-    int IR5_cal = analogRead(IR5); delay(2);
-    if (IR5_cal < IR5_min) {
-      IR5_min = IR5_cal;
-    }
-    else if (IR5_cal > IR5_max) {
-      IR5_max = IR5_cal;
+    else { //auto calibrate
+      int IR1_cal = analogRead(IR1); delay(2);
+      if (IR1_cal < IR1_min) {
+        IR1_min = IR1_cal;
+      }
+      else if (IR1_cal > IR1_max) {
+        IR1_max = IR1_cal;
+      }
+      int IR2_cal = analogRead(IR2); delay(2);
+      if (IR2_cal < IR1_min) {
+        IR1_min = IR2_cal;
+      }
+      else if (IR2_cal > IR1_max) {
+        IR1_max = IR2_cal;
+      }
+      int IR3_cal = analogRead(IR3); delay(2);
+      if (IR3_cal < IR1_min) {
+        IR1_min = IR3_cal;
+      }
+      else if (IR3_cal > IR1_max) {
+        IR1_max = IR3_cal;
+      }
+      int IR4_cal = analogRead(IR4); delay(2);
+      if (IR4_cal < IR1_min) {
+        IR1_min = IR4_cal;
+      }
+      else if (IR4_cal > IR1_max) {
+        IR1_max = IR4_cal;
+      }
+      int IR5_cal = analogRead(IR5); delay(2);
+      if (IR5_cal < IR1_min) {
+        IR1_min = IR5_cal;
+      }
+      else if (IR5_cal > IR1_max) {
+        IR1_max = IR5_cal;
+      }
     }
   }
   while (i != 0 && k != j);
-  IR1_avg = (IR1_min + IR1_max) / 2; IR2_avg = (IR2_min + IR2_max) / 2; IR3_avg = (IR3_min + IR3_max) / 2;
-  IR4_avg = (IR4_min + IR4_max) / 2; IR5_avg = (IR5_min + IR5_max) / 2;
+  if (auto_ == 0) { //manual
+    IR1_avg = (IR1_min + IR1_max) / 2; IR2_avg = (IR2_min + IR2_max) / 2; IR3_avg = (IR3_min + IR3_max) / 2;
+    IR4_avg = (IR4_min + IR4_max) / 2; IR5_avg = (IR5_min + IR5_max) / 2;
+  }
+  else { //auto
+    IR1_avg = (IR1_min + IR1_max) / 2;
+    IR2_avg = IR1_avg, IR3_avg = IR1_avg, IR4_avg = IR1_avg, IR5_avg = IR1_avg;
+  }
   LED(0, 0, 0);
 
 }
@@ -470,9 +536,9 @@ void back_to_line (int speedL, int speedR, int line, int offsetIR) { // while go
 }
 
 unsigned long start_ms = 0;
-void bot_setup(int calibrate_time) {
+void bot_setup(int calibrate_time, int auto_calibrate) {
   //****************** OLED setup ******************//
-  #ifdef OLED
+#ifdef OLED
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
     Serial.println(F("SSD1306 allocation failed"));
@@ -481,25 +547,77 @@ void bot_setup(int calibrate_time) {
   // Show initial display buffer contents on the screen --
   // the library initializes this with an Adafruit splash screen.
   display.display();
-  #endif
+#endif
   //****************** OLED setup ******************//
 
   //****************** robot setup ******************//
-  pinMode(dirL1, OUTPUT);  digitalWrite(dirL1, LOW);
-  //pinMode(dirL2, OUTPUT);  digitalWrite(dirL2, LOW);
-  pinMode(dirR1, OUTPUT);  digitalWrite(dirR1, LOW);
-  //pinMode(dirR2, OUTPUT);  digitalWrite(dirR2, LOW);
-  pinMode(pwmL, OUTPUT);  digitalWrite(pwmL, LOW);
-  pinMode(pwmR, OUTPUT);  digitalWrite(pwmR, LOW);
+  pinMode(pwmL1, OUTPUT);  digitalWrite(pwmL1, LOW);
+  pinMode(pwmL2, OUTPUT);  digitalWrite(pwmL2, LOW);
+  pinMode(pwmR1, OUTPUT);  digitalWrite(pwmR1, LOW);
+  pinMode(pwmR2, OUTPUT);  digitalWrite(pwmR2, LOW);
   pinMode(led_r, OUTPUT); digitalWrite(led_r, LOW);
-  pinMode(led_y, OUTPUT); digitalWrite(led_y, !LOW);
-  pinMode(led_g, OUTPUT); digitalWrite(led_g, !LOW);
-  calibrateIR(calibrate_time);
-  //Serial.begin(9600);
+  pinMode(led_y, OUTPUT); digitalWrite(led_y, LOW);
+  pinMode(led_g, OUTPUT); digitalWrite(led_g, LOW);
+  pinMode(battMon_en, OUTPUT); digitalWrite(battMon_en, HIGH);
   //****************** robot setup ******************//
 
+  //****************** check battery ******************//
+#ifdef OLED
+  oledDisplay(2, 0, 0);
+  display.println("  Battery ");
+  display.println("----------");
+#endif
+  float battVolt = 0;
+  for (int i = 0; i < 100; i++) {
+    battVolt += analogRead(battMon_pin) * 2.89 * 5.00 / 1023.00;
+  }
+  int8_t battPercent = (battVolt - 660) / (840 - 660) * 100;
+  if (battPercent < 0)
+    battPercent = 0;
+  if (battPercent > 80) {
+#ifdef OLED
+    display.print(battPercent); display.println(" %");
+    display.print("      Full");
+    display.display();
+#endif
+    LED(0, 0, 1);
+  }
+  else if (battPercent <= 80 && battPercent > 30) {
+#ifdef OLED
+    display.print(battPercent); display.println(" %");
+    display.print("    Normal");
+    display.display();
+#endif
+    LED(0, 1, 0);
+  }
+  else if (battPercent <= 30 && battPercent > 0) {
+#ifdef OLED
+    display.print(battPercent); display.println(" %");
+    display.print("       Low");
+    display.display();
+#endif
+    LED(1, 0, 0);
+  }
+  else {
+#ifdef OLED
+    display.print(battPercent); display.println(" %");
+    display.print("     Empty");
+    display.display();
+#endif
+    while (1) {
+      LED(1, 0, 0);
+      delay(100);
+      LED(0, 0, 0);
+      delay(150);
+    }
+  }
+  delay(1000);
+  //****************** check battery ******************//
+
+  calibrateIR(calibrate_time, auto_calibrate);
+
   //****************** tell user ready to go ******************//
-  #ifdef OLED
+#ifdef OLED
   oledDisplay(2, 0, 0);
   display.println("All system");
   display.println("");
@@ -512,7 +630,7 @@ void bot_setup(int calibrate_time) {
   display.println("  ..GO..  ");
   display.display();
   delay(500);
-  #endif
+#endif
   //****************** tell user ready to go ******************//
 
   start_ms = millis();
@@ -531,7 +649,7 @@ void display_finishTime() {
     minute += 1;
     second -= 60;
   }
-  #ifdef OLED
+#ifdef OLED
   oledDisplay(3, 0, 0);
   display.println("FINISH!");
   display.setTextSize(2);
@@ -556,7 +674,7 @@ void display_finishTime() {
     display.print(ms / 10); display.print("");
   }
   display.display();
-  #endif
+#endif
   //****************** display finish time ******************//
 
   while (1);
