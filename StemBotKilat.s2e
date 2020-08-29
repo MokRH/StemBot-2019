@@ -39,7 +39,7 @@
 			"w",
 			"Setup | Calibrate IR %m.caltime | Auto calibrate %m.yes_no",
 			"setup",
-			"2_Seconds,Yes",
+			"2_Seconds","Yes",
 			{				
 				"inc":"",
 				"def":"#include \"StemBot2019.h\"\n",
