@@ -390,12 +390,18 @@ void junction(int speed_M, int trace_back, int TYPE, int action, int delay_b4_tu
     else { // robot is OFF line (trace back)
       if (IR_position < setPoint) { // last position is on the LEFT before lost
         LED(0, 0, 1);
-        turnLeft(trace_back, trace_back);
+        if (trace_back != 0)
+          turnLeft(trace_back, trace_back);
+        else
+          forward(0, speed_M);
       }
       else {
         //else if (IR_position >= setPoint) { // last position is on the RIGHT before lost
         LED(1, 0, 0);
-        turnRight(trace_back, trace_back);
+        if (trace_back != 0)
+          turnRight(trace_back, trace_back);
+        else
+          forward(speed_M, 0);
       }
     }
   }
@@ -430,12 +436,19 @@ void obstacle(int speed_M, int trace_back, unsigned int distance, int action, in
     }
     else { // robot is OFF line (trace back)
       if (IR_position < setPoint) { // last position is on the LEFT before lost
-        //LED(1, 0, 0);
-        turnLeft(trace_back, trace_back);
+        LED(0, 0, 1);
+        if (trace_back != 0)
+          turnLeft(trace_back, trace_back);
+        else
+          forward(0, speed_M);
       }
-      else if (IR_position >= setPoint) { // last position is on the RIGHT before lost
-        //LED(0, 0, 1);
-        turnRight(trace_back, trace_back);
+      else {
+        //else if (IR_position >= setPoint) { // last position is on the RIGHT before lost
+        LED(1, 0, 0);
+        if (trace_back != 0)
+          turnRight(trace_back, trace_back);
+        else
+          forward(speed_M, 0);
       }
     }
   }
